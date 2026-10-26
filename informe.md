@@ -69,7 +69,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
 
    ```powershell
    docker version
-   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 postgres:16
+   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 127.0.0.1:5432:5432 postgres:16
    docker ps --filter name=server_db1
    ```
 
@@ -104,7 +104,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
 5. Recrearlo con la misma imagen, nombre y variables, pero sin volumen:
 
    ```powershell
-   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 postgres:16
+   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 127.0.0.1:5432:5432 postgres:16
    docker ps --filter name=server_db1
    ```
 
@@ -124,7 +124,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
    docker stop server_db1
    docker rm server_db1
    docker volume create pgdata
-   docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
+   docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 127.0.0.1:5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
    docker ps --filter name=server_db2
    docker inspect server_db2
    ```
@@ -161,7 +161,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
 10. Recrear el contenedor con el mismo volumen y volver a conectar el cliente:
 
     ```powershell
-    docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
+    docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 127.0.0.1:5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
     docker ps --filter name=server_db2
     ```
 
@@ -192,6 +192,7 @@ Las capturas siguientes muestran resultados de consultas ejecutadas en `psql` y 
 ![Figura 5. Consulta del registro después de recrear server_db2 usando pgdata.](evidencias/figura-5-con-volumen-persistencia.png)
 
 **Figura 5.** Tras recrear `server_db2`, la base `test` y el registro siguieron disponibles.
+
 ## 9. Resultados observados
 
 | Escenario | Resultado comprobado | Conclusión |
@@ -200,6 +201,7 @@ Las capturas siguientes muestran resultados de consultas ejecutadas en `psql` y 
 | `server_db2`, con volumen `pgdata` | Después de eliminar y recrear el contenedor con el mismo volumen, la consulta devolvió `id=1`, `fullname=Ana Pérez`, `status=activo`. | El volumen conservó los archivos de PostgreSQL y permitió recuperar la base, la tabla y el registro. |
 
 La práctica se ejecutó con `postgres:16`. Para dejar el servicio local seguro, el contenedor `server_db2` quedó detenido después de la verificación; el volumen `pgdata` sigue creado y los datos persisten. El archivo `evidencia-practica.txt` contiene la salida de las operaciones y consultas.
+
 ## 10. Bibliografía
 
 - Docker, Inc. (s. f.). *Volumes*. Docker Documentation. https://docs.docker.com/engine/storage/volumes/
