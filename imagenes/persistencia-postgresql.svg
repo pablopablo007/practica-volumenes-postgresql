@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="470" viewBox="0 0 1100 470" role="img" aria-labelledby="title desc">
+<title id="title">Persistencia PostgreSQL con y sin volumen Docker</title>
+<desc id="desc">Comparación del ciclo de los datos en un contenedor efímero y en un volumen nombrado que sobrevive a la recreación del contenedor.</desc>
+<rect width="1100" height="470" rx="20" fill="#f8fafc"/>
+<text x="550" y="48" text-anchor="middle" font-family="Arial,sans-serif" font-size="27" font-weight="700" fill="#0f172a">¿Dónde quedan los datos de PostgreSQL?</text>
+<rect x="45" y="85" width="480" height="330" rx="16" fill="#fff" stroke="#ef4444" stroke-width="3"/>
+<text x="285" y="125" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#991b1b">Sin volumen</text>
+<rect x="100" y="155" width="370" height="115" rx="12" fill="#fee2e2" stroke="#f87171" stroke-width="2"/>
+<text x="285" y="192" text-anchor="middle" font-family="Arial,sans-serif" font-size="19" font-weight="700" fill="#7f1d1d">Contenedor server_db1</text>
+<text x="285" y="229" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#7f1d1d">PostgreSQL + archivos de la base</text>
+<path d="M285 276v45" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
+<text x="285" y="346" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#b91c1c">Eliminar contenedor = perder datos</text>
+<text x="285" y="379" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" fill="#475569">El nuevo contenedor empieza vacío</text>
+<rect x="575" y="85" width="480" height="330" rx="16" fill="#fff" stroke="#16a34a" stroke-width="3"/>
+<text x="815" y="125" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#166534">Con volumen nombrado</text>
+<rect x="625" y="150" width="380" height="90" rx="12" fill="#dcfce7" stroke="#4ade80" stroke-width="2"/>
+<text x="815" y="185" text-anchor="middle" font-family="Arial,sans-serif" font-size="19" font-weight="700" fill="#14532d">Contenedor server_db2</text>
+<text x="815" y="215" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#14532d">PostgreSQL</text>
+<path d="M815 242v35" stroke="#16a34a" stroke-width="4" marker-end="url(#arrowGreen)"/>
+<rect x="625" y="285" width="380" height="85" rx="12" fill="#dbeafe" stroke="#60a5fa" stroke-width="2"/>
+<text x="815" y="320" text-anchor="middle" font-family="Arial,sans-serif" font-size="19" font-weight="700" fill="#1e3a8a">Volumen Docker: pgdata</text>
+<text x="815" y="348" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" fill="#1e40af">Archivos de la base persisten al recrear</text>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker><marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#16a34a"/></marker></defs>
+</svg>
