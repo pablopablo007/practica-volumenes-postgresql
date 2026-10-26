@@ -1,0 +1,103 @@
+=== PRACTICA 3: POSTGRESQL SIN VOLUMEN ===
+Unable to find image 'postgres:16' locally
+16: Pulling from library/postgres
+f2010d5c8971: Pulling fs layer
+9fbbdc3bcbff: Pulling fs layer
+46109ed24d00: Pulling fs layer
+c79a7210985e: Pulling fs layer
+e9da7c9f979b: Pulling fs layer
+b1c4822f4553: Pulling fs layer
+852f46917486: Pulling fs layer
+393ce45a5829: Pulling fs layer
+ef42abb17c7a: Pulling fs layer
+d9b4aee93490: Pulling fs layer
+c85ce0e29e80: Pulling fs layer
+48eee0ea92d8: Pulling fs layer
+25140b6d6501: Pulling fs layer
+f2be67225471: Pulling fs layer
+22f39cf62ad6: Download complete
+852f46917486: Download complete
+d9b4aee93490: Download complete
+25140b6d6501: Download complete
+393ce45a5829: Download complete
+e9da7c9f979b: Download complete
+9fbbdc3bcbff: Download complete
+c85ce0e29e80: Download complete
+f2010d5c8971: Download complete
+b1c4822f4553: Download complete
+ef42abb17c7a: Download complete
+29e2244f39ca: Download complete
+48eee0ea92d8: Download complete
+46109ed24d00: Download complete
+f2be67225471: Download complete
+d9b4aee93490: Pull complete
+f2be67225471: Pull complete
+b1c4822f4553: Pull complete
+46109ed24d00: Pull complete
+48eee0ea92d8: Pull complete
+ef42abb17c7a: Pull complete
+9fbbdc3bcbff: Pull complete
+c85ce0e29e80: Pull complete
+c79a7210985e: Download complete
+c79a7210985e: Pull complete
+852f46917486: Pull complete
+393ce45a5829: Pull complete
+e9da7c9f979b: Pull complete
+25140b6d6501: Pull complete
+f2010d5c8971: Pull complete
+Digest: sha256:9e2cf6287f25c3151f4c9421ccce2b17f3e60061c111a29165e0d2cdd9ff0a97
+Status: Downloaded newer image for postgres:16
+000087909b991b8d4a04e732591e62ff5882696001ccc20a212619a5d642c5bd
+CREATE DATABASE
+CREATE TABLE
+INSERT 0 1
+ id | fullname  | status 
+----+-----------+--------
+  1 | Ana Pérez | activo
+(1 row)
+
+--- eliminar server_db1 ---
+server_db1
+server_db1
+--- recrear server_db1 sin volumen; buscar base test (se espera 0 filas) ---
+508df723cf550b890a1fe5d14cc5277fbf91977877954cb27de77a68fb227604
+ datname 
+---------
+(0 rows)
+
+--- comprobar resultado sin volumen ---
+CONFIRMADO: test no existe después de recrear el contenedor sin volumen.
+=== PRACTICA 3: POSTGRESQL CON VOLUMEN ===
+server_db1
+server_db1
+pgdata
+3bd3883beec008c1b581fddba02674bb3c9d082cfcabca999b74e9698d106f06
+CREATE DATABASE
+CREATE TABLE
+INSERT 0 1
+ id | fullname  | status 
+----+-----------+--------
+  1 | Ana Pérez | activo
+(1 row)
+
+--- eliminar server_db2 y conservar pgdata ---
+server_db2
+server_db2
+DRIVER    VOLUME NAME
+local     pgdata
+--- recrear server_db2 montando pgdata ---
+6535b8a4e79af658d68ae2f2577f32005eb6e8bc5de76ccd39e324652b93d1f0
+ id | fullname  | status 
+----+-----------+--------
+  1 | Ana Pérez | activo
+(1 row)
+
+--- comprobar persistencia ---
+CONFIRMADO: la base test y el registro persisten en pgdata.
+=== DOCKER FINAL ===
+container=server_db2 status=Up 1 second ports=0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+volume=pgdata mountpoint=/var/lib/docker/volumes/pgdata/_data
+
+=== INSPECCION FINAL DEL VOLUMEN ===
+mount=pgdata -> /var/lib/postgresql/data state=exited
+volume=pgdata

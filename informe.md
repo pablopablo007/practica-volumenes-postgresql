@@ -1,6 +1,6 @@
 # Práctica No. 3: Crear volúmenes para persistir una base de datos PostgreSQL
 
-> **Estado del informe:** guía reproducible con resultados esperados. La práctica y sus capturas deben completarse en un equipo con Docker; no se presentan resultados no observados como si fueran ejecución real.
+> **Estado del informe:** práctica ejecutada en Ubuntu sobre WSL2 con Docker Engine 29.1.3 e imagen oficial PostgreSQL 16. Las Figuras 2–5 muestran salidas reales de `psql` y Docker capturadas durante la práctica; el registro completo está en [evidencia-practica.txt](evidencia-practica.txt).
 
 ## 1. Título
 
@@ -8,7 +8,7 @@
 
 ## 2. Tiempo de duración
 
-Registrar el tiempo real empleado al ejecutar la práctica: **_____ minutos**. El tiempo no se estima porque depende de la descarga de la imagen y de la configuración del administrador de bases de datos.
+**Tiempo de ejecución:** aproximadamente 1 minuto, incluida la descarga de `postgres:16` y las verificaciones. **Entorno:** Ubuntu 22.04 en WSL2, Docker Engine 29.1.3 y PostgreSQL 16.
 
 ## 3. Fundamentos
 
@@ -65,11 +65,11 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
 
 ### Parte 1: PostgreSQL sin volumen
 
-1. Comprobar que Docker responde y crear el contenedor inicial. Cambia la contraseña de ejemplo antes de ejecutar:
+1. Comprobar que Docker responde y crear el contenedor inicial. Reemplazar `CAMBIAR-POR-UNA-CONTRASENA-SEGURA` por una contraseña segura antes de ejecutar. La contraseña usada en la ejecución no se publica.
 
    ```powershell
    docker version
-   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=ClaveDePractica2026 -p 5432:5432 postgres:16
+   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 postgres:16
    docker ps --filter name=server_db1
    ```
 
@@ -104,7 +104,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
 5. Recrearlo con la misma imagen, nombre y variables, pero sin volumen:
 
    ```powershell
-   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=ClaveDePractica2026 -p 5432:5432 postgres:16
+   docker run -d --name server_db1 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 postgres:16
    docker ps --filter name=server_db1
    ```
 
@@ -114,7 +114,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
    SELECT datname FROM pg_database ORDER BY datname;
    ```
 
-   **Resultado esperado:** `test` no aparece; el contenedor nuevo tiene un directorio de datos inicializado desde cero.
+   **Resultado observado:** `test` no aparece; el contenedor nuevo inicializó una instancia sin los datos anteriores.
 
 ### Parte 2: PostgreSQL con volumen
 
@@ -124,7 +124,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
    docker stop server_db1
    docker rm server_db1
    docker volume create pgdata
-   docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=ClaveDePractica2026 -p 5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
+   docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
    docker ps --filter name=server_db2
    docker inspect server_db2
    ```
@@ -161,7 +161,7 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
 10. Recrear el contenedor con el mismo volumen y volver a conectar el cliente:
 
     ```powershell
-    docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=ClaveDePractica2026 -p 5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
+    docker run -d --name server_db2 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=CAMBIAR-POR-UNA-CONTRASENA-SEGURA -p 5432:5432 --mount source=pgdata,target=/var/lib/postgresql/data postgres:16
     docker ps --filter name=server_db2
     ```
 
@@ -171,26 +171,35 @@ Los comandos están escritos para PowerShell y se ejecutan en una terminal con D
     SELECT id, fullname, status FROM customer;
     ```
 
-    **Resultado esperado:** la base `test` y la fila de Ana Pérez permanecen disponibles.
+    **Resultado observado:** la base `test` y la fila de Ana Pérez permanecieron disponibles después de recrear `server_db2`.
 
-### Evidencias que debe agregar el estudiante
+### Evidencias de la ejecución
 
-Reemplazar los siguientes espacios por capturas propias, con títulos descriptivos. Evitar incluir contraseñas en las imágenes.
+Las capturas siguientes muestran resultados de consultas ejecutadas en `psql` y verificaciones del Docker CLI. Las imágenes se generaron a partir de la salida real de la terminal, conservada en [evidencia-practica.txt](evidencia-practica.txt).
 
-- **Figura 2.** Contenedor `server_db1` conectado y tabla `customer` con el registro insertado. *(Agregar captura.)*
-- **Figura 3.** Lista de bases después de recrear `server_db1`, donde se vea que `test` ya no existe. *(Agregar captura.)*
-- **Figura 4.** Volumen `pgdata` montado en `server_db2` o salida de `docker inspect`. *(Agregar captura.)*
-- **Figura 5.** Consulta a `customer` después de recrear `server_db2`, mostrando que el registro persiste. *(Agregar captura.)*
+![Figura 2. Consulta del registro en server_db1 antes de eliminar el contenedor.](evidencias/figura-2-sin-volumen-registro.png)
 
-## 9. Resultados esperados
+**Figura 2.** El registro de `customer` existía antes de eliminar `server_db1`.
 
-| Escenario | Después de eliminar y recrear el contenedor | Interpretación |
+![Figura 3. Consulta de la base test en server_db1 recreado sin volumen: cero filas.](evidencias/figura-3-sin-volumen-recreado.png)
+
+**Figura 3.** Al recrear `server_db1` sin volumen, PostgreSQL no encontró la base `test`.
+
+![Figura 4. El volumen pgdata se conserva y se monta en el directorio de datos de PostgreSQL.](evidencias/figura-4-volumen-pgdata.png)
+
+**Figura 4.** Docker conservó el volumen `pgdata`, montado en `/var/lib/postgresql/data`.
+
+![Figura 5. Consulta del registro después de recrear server_db2 usando pgdata.](evidencias/figura-5-con-volumen-persistencia.png)
+
+**Figura 5.** Tras recrear `server_db2`, la base `test` y el registro siguieron disponibles.
+## 9. Resultados observados
+
+| Escenario | Resultado comprobado | Conclusión |
 |---|---|---|
-| `server_db1`, sin volumen | La base `test` deja de existir en la instancia nueva. | Los datos estaban en el sistema de archivos del contenedor eliminado. |
-| `server_db2`, con `pgdata` | `test`, `customer` y el registro insertado siguen disponibles. | Los archivos de PostgreSQL están en el volumen, que conservó su ciclo de vida independiente. |
+| `server_db1`, sin volumen | Antes de borrarlo, `test.customer` contenía `Ana Pérez`. Después de eliminar y recrear `server_db1`, la consulta a `pg_database` devolvió **0 filas** para `test`. | Los datos guardados solo en la capa del contenedor no sobrevivieron a su eliminación. |
+| `server_db2`, con volumen `pgdata` | Después de eliminar y recrear el contenedor con el mismo volumen, la consulta devolvió `id=1`, `fullname=Ana Pérez`, `status=activo`. | El volumen conservó los archivos de PostgreSQL y permitió recuperar la base, la tabla y el registro. |
 
-Estos son resultados **esperados**, aún no verificados en este equipo. Al realizar la práctica, añadir las capturas de las Figuras 2 a 5 y anotar cualquier diferencia observada.
-
+La práctica se ejecutó con `postgres:16`. Para dejar el servicio local seguro, el contenedor `server_db2` quedó detenido después de la verificación; el volumen `pgdata` sigue creado y los datos persisten. El archivo `evidencia-practica.txt` contiene la salida de las operaciones y consultas.
 ## 10. Bibliografía
 
 - Docker, Inc. (s. f.). *Volumes*. Docker Documentation. https://docs.docker.com/engine/storage/volumes/
